@@ -1,0 +1,68 @@
+#
+# CircleCI Package builder for data utilities
+# Austin Transportation Department
+#
+# This is a package builder for the python utility packages
+# found in https://github.com/cityofaustin/atd-data-utilities/
+#
+
+version: 2.1
+
+
+jobs:
+  #
+  # ToDo: Run unit or integration tests
+  #
+  test:
+    working_directory: ~/atd-data-utilities
+    docker:
+      - image: circleci/python:3.6.4
+    steps:
+      - checkout
+  #
+  # Our entry point
+  #
+  build:
+    # We specify where the commands will be run
+    working_directory: ~/atd-data-utilities
+
+    # We are going to pick a stable python distribution
+    docker:
+      - image: circleci/python:3.6.4
+
+    # Our build steps
+    steps:
+      - checkout
+      - run:
+          name: "Installing dependencies"
+          command: |
+            sudo apt-get install jq
+            sudo pip install awscli setuptools wheel twine bumpversion
+            source ./circleci/pypi-helper.sh
+      - run:
+          name: "Building Packages"
+          command: build_packages
+
+workflows:
+  version: 2.1
+  test-and-build:
+    jobs:
+      - test
+      #
+      # Our first build scenario: ignore master (all non-master commits, ie: PRs, other branches including dev)
+      # In this scenario we will pass the 'dev' value to our build process above.
+      #
+      - build:
+          filters:
+            branches:
+              ignore:
+                - master
+      #
+      # Our second scenario: only master (no prs or any commits from any other branch)
+      # In this scenario we will pass the value "master" through our BUILD_ENVIRONMENT parameter
+      # to our build process above.
+      #
+      - build:
+          filters:
+            branches:
+              only: master
