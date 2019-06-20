@@ -29,7 +29,7 @@ jobs:
           command: |
             sudo apt-get install jq
             sudo pip install awscli setuptools wheel twine bumpversion
-            source ./circleci/pypi-helper.sh
+            source .circleci/pypi-helper.sh
       - run:
           name: "Building Packages"
           command: build_packages
