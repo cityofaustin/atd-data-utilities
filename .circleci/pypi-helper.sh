@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if [[ "${CIRCLE_BRANCH}" = "master" ]]; then
+    export BUILD_ENV="master";
+else
+    export BUILD_ENV="dev";
+fi;
+
+
 #
 # A helper function that prints a message in the build logs that is easy to identify.
 #
@@ -11,57 +18,96 @@ function print_header {
 }
 
 #
+# Prints a line for logging
+#
+function print_log {
+    ENABLE_LOGGING="true"
+    if [[ "${ENABLE_LOGGING}" = "true" ]]; then
+        echo $1;
+    fi;
+}
+
+#
 # Helps us determine the package version
-# ie. pypi_get_current_version agolutil
+# ie. build_get_package_version agolutil
 #
 
-function pypi_get_current_version {
+function build_get_package_version {
     PACKAGE=$1;
-    VERSION=$(grep version $PACKAGE/setup.py | cut -d'"' -f 2);
-    echo $VERSION;
-}
-
-#
-# Increases the version of a specific package
-#
-
-function pypi_increase_version {
-    PACKAGE=$1;
-    CURRENT_VERSION=$(pypi_get_current_version $PACKAGE);
-
-    print_header "Building package $PACKAGE";
-
-    echo "bumpversion --current-version $CURRENT_VERSION minor setup.py"
-
-    cd $PACKAGE;
-    bumpversion --current-version $CURRENT_VERSION minor $PACKAGE/setup.py;
+    echo $(grep version setup.py | cut -d'"' -f 2);
 }
 
 
+#
+# Returns true if the build already exists
+#
 
+function build_already_exists {
+    PACKAGE=$1
+    PACKAGE_VERSION=$(build_get_package_version $PACKAGE);
+    FOUND="false";
+
+    for VERSION_ITEM in $(curl --silent https://pypi.org/pypi/$PACKAGE/json | jq -r ".releases | keys[]" 2> /dev/null);
+    do
+        if [[ "${VERSION_ITEM}" = "${PACKAGE_VERSION}" ]]; then
+            FOUND="true"
+        fi;
+    done;
+
+    echo "${FOUND}";
+}
+
+
+#
+# Returns the name of the environment
+#
+
+function build_resolve_environment {
+    if [[ "${BUILD_ENVIRONMENT}" = "" ]]; then
+        echo "dev";
+    else
+        echo "${BUILD_ENVIRONMENT}";
+    fi;
+}
 
 #
 # Patches the setup.py file in order to deploy a specific package environment
 #
-
-function build_patch_branch_name {
-    echo "Not yet implemented."
+function build_patch_package_name {
+    PACKAGE=$1
+    print_header "build_patch_package_name() Patching package: ${PACKAGE}";
+    sed -i "7s/${PACKAGE}/${PACKAGE}-${BUILD_ENV}/" setup.py
 }
 
 
+
+
+
 #
-# Build & Publish a single package
+# Build & Publish a single package.
+# It assumes 'setup.py' is in the current working directory.
 #
 function build_single_package {
     PACKAGE=$1;
-    cd $PACKAGE;
-
-    # Let's build our package distributables
-
+    print_header "build_single_package() building package: ${PACKAGE}";
     python3 setup.py sdist bdist_wheel;
-
-    cd ..;
 }
+
+
+#
+# Deploys a built package into pypi.
+# It assumes the 'dist' folder is in the current working directory.
+#
+function build_deploy_single_package {
+    PACKAGE=$1;
+    print_header "build_deploy_single_package() deploying package: ${PACKAGE}";
+    #twine upload --repository-url https://upload.pypi.org/legacy/ dist/*;
+    print_log "build_deploy_single_package() testing the contents of dist/*";
+    ls -lha dist;
+    print_log "build_deploy_single_package() twine upload --repository-url https://upload.pypi.org/legacy/ dist/*;"
+}
+
+
 
 #
 # This function will return a list of all packages that need
@@ -69,16 +115,38 @@ function build_single_package {
 #
 
 function build_packages {
-    export BUILD_ENV=$1
-
-    print_header "Building branch: ${CIRCLE_BRANCH}"
+    print_header "Building branch: ${BUILD_ENV}"
 
     for ATD_PACKAGE in $(jq -r ".packages[]" .circleci/packages.json);
     do
+        #
+        # Proceed only if the package can be found
+        #
+        if [ -e $ATD_PACKAGE/setup.py ];
+        then
+            print_log "build_packages() Package Found: ${ATD_PACKAGE}/setup.py";
 
-        # pypi_increase_version $ATD_PACKAGE;
+            # First we need to switch to the package folder...
+            cd $ATD_PACKAGE;
 
-        build_single_package $ATD_PACKAGE;
+            # Gather package version and check if it already exists...
+            PACKAGE_VERSION=$(build_get_package_version $ATD_PACKAGE);
+            PACKAGE_EXISTS=$(build_already_exists);
+
+            # Skip build process if the current version is already built
+            if [[ "${PACKAGE_EXISTS}" = "false" ]]; then
+                build_patch_package_name $ATD_PACKAGE;
+                build_single_package $ATD_PACKAGE;
+                build_deploy_single_package $ATD_PACKAGE;
+            else
+                print_log "Package ${ATD_PACKAGE} is already deployed, skipping build process.";
+                # We do not stop here because we may need to check other packages too..
+            fi;
+
+            cd ..;
+        else
+            print_log "build_packages() Could not find package ${ATD_PACKAGE}/setup.py";
+        fi;
     done;
 }
 
