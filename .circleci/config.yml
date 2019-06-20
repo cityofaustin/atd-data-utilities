@@ -11,15 +11,6 @@ version: 2.1
 
 jobs:
   #
-  # ToDo: Run unit or integration tests
-  #
-  test:
-    working_directory: ~/atd-data-utilities
-    docker:
-      - image: circleci/python:3.6.4
-    steps:
-      - checkout
-  #
   # Our entry point
   #
   build:
@@ -45,18 +36,8 @@ jobs:
 
 workflows:
   version: 2.1
-  test-and-build:
+  build:
     jobs:
-      - test
-      #
-      # Our first build scenario: ignore master (all non-master commits, ie: PRs, other branches including dev)
-      # In this scenario we will pass the 'dev' value to our build process above.
-      #
-      - build:
-          filters:
-            branches:
-              ignore:
-                - master
       #
       # Our second scenario: only master (no prs or any commits from any other branch)
       # In this scenario we will pass the value "master" through our BUILD_ENVIRONMENT parameter
@@ -65,4 +46,6 @@ workflows:
       - build:
           filters:
             branches:
-              only: master
+              only:
+              - dev
+              - master
