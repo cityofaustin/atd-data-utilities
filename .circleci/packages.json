@@ -1,5 +1,7 @@
 {
   "packages": [
-    "agolutil"
+    "atd-agol-util",
+    "atd-email-util",
+    "atd-fake-util"
   ]
 }
