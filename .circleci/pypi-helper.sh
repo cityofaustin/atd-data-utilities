@@ -108,10 +108,8 @@ function build_single_package {
 function build_deploy_single_package {
     PACKAGE=$1;
     print_header "build_deploy_single_package() deploying package: ${PACKAGE}";
-    #twine upload --repository-url https://upload.pypi.org/legacy/ dist/*;
-    print_log "build_deploy_single_package() testing the contents of dist/*";
-    ls -lha dist;
     print_log "build_deploy_single_package() twine upload --repository-url https://upload.pypi.org/legacy/ dist/*;"
+    twine upload --repository-url https://upload.pypi.org/legacy/ dist/*;
 }
 
 
