@@ -2,9 +2,19 @@
 Helper methods to work with [ArcGIS for Python API](http://arcgis.com), mixed in with a few manual [ArcGIS REST API](http://google.com) requests.
 
 ## Installation
+
+Master branch:
+
 ```
-pip install atd-agolutil
+pip install atd-agol-util
 ```
+
+Development branch:
+
+```
+pip install atd-agol-util-dev
+```
+
 
 ## License
 

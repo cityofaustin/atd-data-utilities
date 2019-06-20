@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="atd-agolutil-test",
+    name="atd-agol-util",
     version="0.0.6",
     author="City of Austin",
     author_email="transportation.data@austintexas.gov",
@@ -15,7 +15,7 @@ setuptools.setup(
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/cityofaustin/atd-data-utilities",
+    url="https://github.com/cityofaustin/atd-data-utilities/tree/master/agolutil",
     packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",
