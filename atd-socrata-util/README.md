@@ -3,6 +3,8 @@ Python utilities for interacting with the Socrata Open Data API.
 
 ## Installation
 
+Master branch:
+
 ```
 pip install atd-socrata-util
 ```
