@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="atd-agol-util",
-    version="0.0.4",
+    version="0.0.5",
     author="City of Austin",
     author_email="transportation.data@austintexas.gov",
     description="Python utilities interacting with the ArcGIS Online (AGOL) API.",
