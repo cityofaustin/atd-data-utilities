@@ -75,8 +75,15 @@ function build_resolve_environment {
 #
 function build_patch_package_name {
     PACKAGE=$1
+    POSTFIX=""
     print_header "build_patch_package_name() Patching package: ${PACKAGE}";
-    sed -i "7s/${PACKAGE}/${PACKAGE}-${BUILD_ENV}/" setup.py
+
+    # Only add postfix if not on master
+    if [[ "${BUILD_ENV}" != "master" ]]; then
+        POSTFIX="-${BUILD_ENV}";
+    fi;
+
+    sed -i "7s/${PACKAGE}/${PACKAGE}${POSTFIX}/" setup.py
 }
 
 
