@@ -23,7 +23,7 @@ function print_header {
 function print_log {
     ENABLE_LOGGING="true"
     if [[ "${ENABLE_LOGGING}" = "true" ]]; then
-        echo $1;
+        echo -e "$1";
     fi;
 }
 
@@ -144,7 +144,7 @@ function build_packages {
 
             # Gather package version and check if it already exists...
             PACKAGE_VERSION=$(build_get_package_version $ATD_PACKAGE);
-            PACKAGE_EXISTS=$(build_already_exists);
+            PACKAGE_EXISTS=$(build_already_exists $ATD_PACKAGE);
 
             # Skip build process if the current version is already built
             if [[ "${PACKAGE_EXISTS}" = "false" ]]; then
@@ -152,7 +152,7 @@ function build_packages {
                 build_single_package $ATD_PACKAGE;
                 build_deploy_single_package $ATD_PACKAGE;
             else
-                print_log "Package ${ATD_PACKAGE} is already deployed, skipping build process.";
+                print_log "build_packages() The package '${ATD_PACKAGE}' is already deployed, skipping build process.";
                 # We do not stop here because we may need to check other packages too..
             fi;
 
@@ -161,6 +161,8 @@ function build_packages {
             print_log "build_packages() Could not find package ${ATD_PACKAGE}/setup.py";
         fi;
     done;
+
+    print_header "build_packages() Finished build loop.";
 }
 
 
