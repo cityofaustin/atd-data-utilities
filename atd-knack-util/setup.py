@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="atd-knack-util",
-    version="0.0.2",
+    version="0.0.3",
     author="City of Austin",
     author_email="transportation.data@austintexas.gov",
     description="Python utilities for interacting with Knack applications.",
@@ -15,6 +15,7 @@ setuptools.setup(
     install_requires=[
         "arrow"
     ],
+    packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",
         "License :: Public Domain",
