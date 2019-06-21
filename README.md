@@ -6,16 +6,15 @@ This is the transportation department utilities repository, it contains developm
 
 These are the packages that are contained within this repository:
 
-- [atd-email-util](https://github.com/cityofaustin/atd-utils-email) 
-- [atd-data-util](https://github.com/cityofaustin/atd-utils-data)
-- [atd-args-util](https://github.com/cityofaustin/atd-utils-args)
-- [atd-jobs-util](https://github.com/cityofaustin/atd-utils-jobs)
-- [atd-log-util](https://github.com/cityofaustin/atd-utils-log)
-- [atd-knack-util](https://github.com/cityofaustin/atd-utils-knack)
-- [atd-agol-util](https://github.com/cityofaustin/atd-utils-agol)
-- [atd-socrata-util](https://github.com/cityofaustin/atd-utils-socrata)
-- [atd-kits-util](https://github.com/cityofaustin/atd-utils-kits)
-
+- [atd-email-util](https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-email-util)
+- [atd-data-util](https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-data-util)
+- [atd-args-util](https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-args-util)
+- [atd-jobs-util](https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-jobs-util)
+- [atd-log-util](https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-log-util)
+- [atd-knack-util](https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-knack-util)
+- [atd-agol-util](https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-agol-util)
+- [atd-socrata-util](https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-socrata-util)
+- [atd-kits-util](https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-kits-util)
 ## CD/CI
 
 We make use of CircleCI for our deployments, you can see the build script in the `.circleci` folder in this repo. The basic process consists of a couple steps:
