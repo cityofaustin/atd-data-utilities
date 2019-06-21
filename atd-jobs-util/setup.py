@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="atd-jobs-util",
-    version="0.0.3",
+    version="0.0.4",
     author="City of Austin",
     author_email="transportation.data@austintexas.gov",
     description="Utilities for registering PostgREST scripting jobs.",
@@ -16,6 +16,7 @@ setuptools.setup(
         "arrow",
         "requests",
     ],
+    packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",
         "License :: Public Domain",
