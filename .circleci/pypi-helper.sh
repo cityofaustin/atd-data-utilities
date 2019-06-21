@@ -23,7 +23,7 @@ function print_header {
 function print_log {
     ENABLE_LOGGING="true"
     if [[ "${ENABLE_LOGGING}" = "true" ]]; then
-        echo $1;
+        echo -e "$1";
     fi;
 }
 
@@ -43,10 +43,18 @@ function build_get_package_version {
 #
 
 function build_already_exists {
-    PACKAGE=$1
+    PACKAGE=$1;
     PACKAGE_VERSION=$(build_get_package_version $PACKAGE);
     FOUND="false";
 
+    # We need to change the postfix when in the dev environment.
+    if [[ "${BUILD_ENV}" == "dev" ]]; then
+        PACKAGE="${PACKAGE}-dev";
+    fi;
+
+    # We then check with pypi using their API to retrieve all published versions
+    # jq will parse the api output, dev>null will take care of output errors to
+    # prevent circleci from stopping the build.
     for VERSION_ITEM in $(curl --silent https://pypi.org/pypi/$PACKAGE/json | jq -r ".releases | keys[]" 2> /dev/null);
     do
         if [[ "${VERSION_ITEM}" = "${PACKAGE_VERSION}" ]]; then
@@ -108,10 +116,8 @@ function build_single_package {
 function build_deploy_single_package {
     PACKAGE=$1;
     print_header "build_deploy_single_package() deploying package: ${PACKAGE}";
-    #twine upload --repository-url https://upload.pypi.org/legacy/ dist/*;
-    print_log "build_deploy_single_package() testing the contents of dist/*";
-    ls -lha dist;
     print_log "build_deploy_single_package() twine upload --repository-url https://upload.pypi.org/legacy/ dist/*;"
+    twine upload --repository-url https://upload.pypi.org/legacy/ dist/*;
 }
 
 
@@ -138,7 +144,7 @@ function build_packages {
 
             # Gather package version and check if it already exists...
             PACKAGE_VERSION=$(build_get_package_version $ATD_PACKAGE);
-            PACKAGE_EXISTS=$(build_already_exists);
+            PACKAGE_EXISTS=$(build_already_exists $ATD_PACKAGE);
 
             # Skip build process if the current version is already built
             if [[ "${PACKAGE_EXISTS}" = "false" ]]; then
@@ -146,7 +152,7 @@ function build_packages {
                 build_single_package $ATD_PACKAGE;
                 build_deploy_single_package $ATD_PACKAGE;
             else
-                print_log "Package ${ATD_PACKAGE} is already deployed, skipping build process.";
+                print_log "build_packages() The package '${ATD_PACKAGE}' is already deployed, skipping build process.";
                 # We do not stop here because we may need to check other packages too..
             fi;
 
@@ -155,6 +161,8 @@ function build_packages {
             print_log "build_packages() Could not find package ${ATD_PACKAGE}/setup.py";
         fi;
     done;
+
+    print_header "build_packages() Finished build loop.";
 }
 
 

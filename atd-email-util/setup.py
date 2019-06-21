@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="atd-email-util",
-    version="0.0.1",
+    version="0.0.2",
     author="City of Austin",
     author_email="transportation.data@austintexas.gov",
     description="Python utilities for sending emails with a gmail account.",
@@ -14,7 +14,7 @@ setuptools.setup(
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/cityofaustin/atd-data-utilities/tree/master/emailutil",
+    url="https://github.com/cityofaustin/atd-data-utilities/tree/master/atd-email-util",
     packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",

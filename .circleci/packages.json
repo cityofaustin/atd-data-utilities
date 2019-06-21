@@ -2,6 +2,12 @@
   "packages": [
     "atd-agol-util",
     "atd-email-util",
-    "atd-fake-util"
+    "atd-args-util",
+    "atd-data-util",
+    "atd-jobs-util",
+    "atd-kits-util",
+    "atd-knack-util",
+    "atd-log-util",
+    "atd-socrata-util"
   ]
 }
