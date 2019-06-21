@@ -43,10 +43,18 @@ function build_get_package_version {
 #
 
 function build_already_exists {
-    PACKAGE=$1
+    PACKAGE=$1;
     PACKAGE_VERSION=$(build_get_package_version $PACKAGE);
     FOUND="false";
 
+    # We need to change the postfix when in the dev environment.
+    if [[ "${BUILD_ENV}" == "dev" ]]; then
+        PACKAGE="${PACKAGE}-dev";
+    fi;
+
+    # We then check with pypi using their API to retrieve all published versions
+    # jq will parse the api output, dev>null will take care of output errors to
+    # prevent circleci from stopping the build.
     for VERSION_ITEM in $(curl --silent https://pypi.org/pypi/$PACKAGE/json | jq -r ".releases | keys[]" 2> /dev/null);
     do
         if [[ "${VERSION_ITEM}" = "${PACKAGE_VERSION}" ]]; then
