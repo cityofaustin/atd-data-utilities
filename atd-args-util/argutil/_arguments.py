@@ -18,7 +18,7 @@ ARGUMENTS = {
     },
     "app_name": {
         "action": "store",
-        "choices": ["data_tracker_prod", "data_tracker_test", "visitor_sign_in_prod"],
+        "choices": ["data_tracker_prod", "data_tracker_test", "visitor_sign_in_prod", "dts_portal_test", "dts_portal_prod"],
         "type": str,
         "help": "Name of the knack application that will be accessed",
     },
