@@ -7,7 +7,7 @@ ARGUMENTS = {
     "device_type": {
         "action": "store",
         "type": str,
-        "choices": ["signals", "travel_sensors", "cameras", "cameras_cell_modem", "cameras_not_cell_modem", "gridsmart", "detectors"],
+        "choices": ["signals", "travel_sensors", "cameras", "cameras_cell_modem", "cameras_not_cell_modem", "gridsmart", "detectors", "cabinets"],
         "help": "Type of device to ping.",
     },
     "eval_type": {
