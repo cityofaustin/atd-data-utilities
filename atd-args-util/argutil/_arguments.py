@@ -7,7 +7,16 @@ ARGUMENTS = {
     "device_type": {
         "action": "store",
         "type": str,
-        "choices": ["signals", "travel_sensors", "cameras", "cameras_cell_modem", "cameras_not_cell_modem", "gridsmart", "detectors", "cabinets"],
+        "choices": [
+            "signals",
+            "travel_sensors",
+            "cameras",
+            "cameras_cell_modem",
+            "cameras_not_cell_modem",
+            "gridsmart",
+            "detectors",
+            "cabinets",
+        ],
         "help": "Type of device to ping.",
     },
     "eval_type": {
@@ -18,7 +27,13 @@ ARGUMENTS = {
     },
     "app_name": {
         "action": "store",
-        "choices": ["data_tracker_prod", "data_tracker_test", "visitor_sign_in_prod", "dts_portal_test", "dts_portal_prod"],
+        "choices": [
+            "data_tracker_prod",
+            "data_tracker_test",
+            "visitor_sign_in_prod",
+            "dts_portal_test",
+            "dts_portal_prod",
+        ],
         "type": str,
         "help": "Name of the knack application that will be accessed",
     },
@@ -26,7 +41,7 @@ ARGUMENTS = {
         "action": "store",
         "type": str,
         "help": "Name of the mobiltiy provider.",
-    },    
+    },
     "--destination": {
         "flag": "-d",
         "action": "append",
@@ -53,13 +68,13 @@ ARGUMENTS = {
         "help": "A unix timestamp representing the last date the job was run. Will be applied as a temporal filter when querying data for processing.",
     },
     "--start": {
-            "action": "store",
-            "type": int,
-            "help": "A unix timestamp representing a start datetime.",
-        },
+        "action": "store",
+        "type": int,
+        "help": "A unix timestamp representing a start datetime.",
+    },
     "--end": {
-            "action": "store",
-            "type": int,
-            "help": "A unix timestamp representing an end datetime.",
-        },
+        "action": "store",
+        "type": int,
+        "help": "A unix timestamp representing an end datetime.",
+    },
 }
