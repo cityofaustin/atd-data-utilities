@@ -11,8 +11,6 @@ import requests
 
 from datautil import mills_to_unix, iso_to_unix, lower_case_keys
 
-import pdb
-
 
 class Soda(object):
     """
@@ -72,7 +70,7 @@ class Soda(object):
         if self.date_fields:
             if self.source == "knack":
                 self.records = mills_to_unix(self.records, self.date_fields)
-            elif self.source == "postgrest":
+            elif self.source == "postgrest" or self.source == "kits":
                 self.records = iso_to_unix(self.records, self.date_fields)
 
         self.records = lower_case_keys(self.records)
