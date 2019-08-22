@@ -16,7 +16,7 @@ def get_token(auth, base_url="https://austin.maps.arcgis.com"):
     params = {
         "username": auth["user"],
         "password": auth["password"],
-        "referer": "http://www.arcgis.com",
+        "referer": "https://www.arcgis.com",
         "f": "pjson",
     }
 
@@ -27,7 +27,7 @@ def get_token(auth, base_url="https://austin.maps.arcgis.com"):
 
 
 def query_atx_street(segment_id, token):
-    url = "http://services.arcgis.com/0L95CJ0VTaxqcmED/arcgis/rest/services/TRANSPORTATION_street_segment/FeatureServer/0/query"
+    url = "https://services.arcgis.com/0L95CJ0VTaxqcmED/arcgis/rest/services/TRANSPORTATION_street_segment/FeatureServer/0/query"
 
     where = "SEGMENT_ID={}".format(segment_id)
 
@@ -53,7 +53,7 @@ def point_in_poly(service_name, layer_id, params):
 
     #TODO: replace with arcgis library api
     """
-    query_url = "http://services.arcgis.com/0L95CJ0VTaxqcmED/ArcGIS/rest/services/{}/FeatureServer/{}/query".format(
+    query_url = "https://services.arcgis.com/0L95CJ0VTaxqcmED/ArcGIS/rest/services/{}/FeatureServer/{}/query".format(
         service_name, layer_id
     )
 
@@ -71,7 +71,7 @@ def get_item(auth=None, item_type="layer", layer_id=0, service_id=None):
         raise Exception("Service ID is required")
 
     gis = GIS(
-        "http://austin.maps.arcgis.com",
+        "https://austin.maps.arcgis.com",
         username=auth["user"],
         password=auth["password"],
     )
