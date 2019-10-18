@@ -92,7 +92,9 @@ def feature_collection(
     data, lat_field="latitude", lon_field="longitude", spatial_ref=4326
 ):
     """
-    Assemble an ArcREST featureCollection object
+    Assemble an ArcREST featureCollection object.
+    Assumes input records is a list of dicts, with each entry having a geometry object matching the 
+    structure defined in the REST API.
     spec: http://resources.arcgis.com/en/help/arcgis-rest-api/#/Feature_object/02r3000000n8000000/
     """
     features = []
@@ -115,8 +117,13 @@ def feature_collection(
             new_record["geometry"]["x"] = record.get(lon_field)
             new_record["geometry"]["y"] = record.get(lat_field)
 
+        elif record.get("points"):
+            # Handle multipoint geometry
+            # https://developers.arcgis.com/documentation/common-data-types/geometry-objects.htm
+            new_record["geometry"]["points"] = record.pop("points")
+
         else:
-            #  strip geometry from records with missing/unkown geometry data
+            #  drop geometry from records with missing/unkown geometry data
             new_record.pop("geometry")
 
         features.append(new_record)
