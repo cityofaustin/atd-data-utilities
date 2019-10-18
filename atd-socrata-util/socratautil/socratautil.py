@@ -67,13 +67,13 @@ class Soda(object):
 
     def _handle_records(self):
 
+        self.records = lower_case_keys(self.records)
+
         if self.date_fields:
             if self.source == "knack":
                 self.records = mills_to_unix(self.records, self.date_fields)
             elif self.source == "postgrest" or self.source == "kits":
                 self.records = iso_to_unix(self.records, self.date_fields)
-
-        self.records = lower_case_keys(self.records)
 
         # need to handle nulls after lowercase keys or the keys won't match the metdata
         self._handle_nulls()
@@ -110,8 +110,6 @@ class Soda(object):
         return self.records
 
     def _upload(self):
-
-        self.records = new_records
 
         if self.replace:
             res = requests.put(self.url, json=self.records, auth=self.auth)
@@ -178,6 +176,12 @@ class Soda(object):
             if column["dataTypeName"] == "number"
         ]
 
+        fields_dates = [
+            column["fieldName"]
+            for column in columns
+            if column["dataTypeName"] == "date"
+        ]
+
         for record in self.records:
             for key in record.keys():
                 if key in fields_strings:
@@ -198,6 +202,11 @@ class Soda(object):
                 elif key in fields_numbers:
                     # socrata will not accept an empty string for null number values
                     if record[key] == "":
+                        record[key] = None
+
+                elif key in fields_dates:
+                    if not record.get(key):
+                        # socrata will not accept an empty string for date values
                         record[key] = None
 
         return
