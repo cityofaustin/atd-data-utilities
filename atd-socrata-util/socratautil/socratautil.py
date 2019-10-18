@@ -67,13 +67,13 @@ class Soda(object):
 
     def _handle_records(self):
 
+        self.records = lower_case_keys(self.records)
+
         if self.date_fields:
             if self.source == "knack":
                 self.records = mills_to_unix(self.records, self.date_fields)
             elif self.source == "postgrest" or self.source == "kits":
                 self.records = iso_to_unix(self.records, self.date_fields)
-
-        self.records = lower_case_keys(self.records)
 
         # need to handle nulls after lowercase keys or the keys won't match the metdata
         self._handle_nulls()
@@ -110,8 +110,6 @@ class Soda(object):
         return self.records
 
     def _upload(self):
-
-        self.records = new_records
 
         if self.replace:
             res = requests.put(self.url, json=self.records, auth=self.auth)
