@@ -78,6 +78,8 @@ class Soda(object):
         # need to handle nulls after lowercase keys or the keys won't match the metdata
         self._handle_nulls()
 
+        self._drop_unknown_fields()
+
         if self.location_field:
             self.records = self._location_fields()
 
@@ -108,6 +110,9 @@ class Soda(object):
         return self.records
 
     def _upload(self):
+
+        self.records = new_records
+
         if self.replace:
             res = requests.put(self.url, json=self.records, auth=self.auth)
 
@@ -115,6 +120,7 @@ class Soda(object):
             res = requests.post(self.url, json=self.records, auth=self.auth)
 
         res.raise_for_status()
+
         return res.json()
 
     def _handle_response(self):
@@ -139,6 +145,18 @@ class Soda(object):
         res.raise_for_status()
         self.data = res.json()
         return res.json()
+
+    def _drop_unknown_fields(self):
+        # as of sep 2019 socrata will reject a payload if it has fieldnames not found in the dataset
+        # (previous behavior was to ignore these)
+        for record in self.records:
+            record = {
+                item[0]: item[1]
+                for item in record.items()
+                if item[0] in self.fieldnames
+            }
+
+        return
 
     def _handle_nulls(self):
         # Set empty strings to None. Socrata does not allow empty strings.
