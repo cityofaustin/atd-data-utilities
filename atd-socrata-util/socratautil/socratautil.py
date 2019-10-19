@@ -67,16 +67,18 @@ class Soda(object):
 
     def _handle_records(self):
 
+        self.records = lower_case_keys(self.records)
+
         if self.date_fields:
             if self.source == "knack":
                 self.records = mills_to_unix(self.records, self.date_fields)
             elif self.source == "postgrest" or self.source == "kits":
                 self.records = iso_to_unix(self.records, self.date_fields)
 
-        self.records = lower_case_keys(self.records)
-
         # need to handle nulls after lowercase keys or the keys won't match the metdata
         self._handle_nulls()
+
+        self._drop_unknown_fields()
 
         if self.location_field:
             self.records = self._location_fields()
@@ -108,6 +110,7 @@ class Soda(object):
         return self.records
 
     def _upload(self):
+
         if self.replace:
             res = requests.put(self.url, json=self.records, auth=self.auth)
 
@@ -115,6 +118,7 @@ class Soda(object):
             res = requests.post(self.url, json=self.records, auth=self.auth)
 
         res.raise_for_status()
+
         return res.json()
 
     def _handle_response(self):
@@ -140,6 +144,18 @@ class Soda(object):
         self.data = res.json()
         return res.json()
 
+    def _drop_unknown_fields(self):
+        # as of sep 2019 socrata will reject a payload if it has fieldnames not found in the dataset
+        # (previous behavior was to ignore these)
+        for record in self.records:
+            record = {
+                item[0]: item[1]
+                for item in record.items()
+                if item[0] in self.fieldnames
+            }
+
+        return
+
     def _handle_nulls(self):
         # Set empty strings to None. Socrata does not allow empty strings.
         # Convert other string field objects to strings for good measure
@@ -158,6 +174,12 @@ class Soda(object):
             column["fieldName"]
             for column in columns
             if column["dataTypeName"] == "number"
+        ]
+
+        fields_dates = [
+            column["fieldName"]
+            for column in columns
+            if column["dataTypeName"] == "date"
         ]
 
         for record in self.records:
@@ -180,6 +202,11 @@ class Soda(object):
                 elif key in fields_numbers:
                     # socrata will not accept an empty string for null number values
                     if record[key] == "":
+                        record[key] = None
+
+                elif key in fields_dates:
+                    if not record.get(key):
+                        # socrata will not accept an empty string for date values
                         record[key] = None
 
         return
