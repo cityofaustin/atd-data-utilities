@@ -6,6 +6,7 @@ in order to handle some common ETL routines, particularly with Knack integration
 """
 import json
 import os
+from pprint import pprint as print
 
 import requests
 
@@ -72,7 +73,7 @@ class Soda(object):
         if self.date_fields:
             if self.source == "knack":
                 self.records = mills_to_unix(self.records, self.date_fields)
-            elif self.source == "postgrest" or self.source == "kits":
+            elif self.source == "postgrest" or self.source == "kits" or self.source == "bcycle":
                 self.records = iso_to_unix(self.records, self.date_fields)
 
         # need to handle nulls after lowercase keys or the keys won't match the metdata

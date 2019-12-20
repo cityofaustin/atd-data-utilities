@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="atd-socrata-util",
-    version="0.0.8",
+    version="0.0.9",
     author="City of Austin",
     author_email="transportation.data@austintexas.gov",
     description="Utilities interacting with the Socrata Open Data API.",
