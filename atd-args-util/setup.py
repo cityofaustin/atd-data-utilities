@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="atd-args-util",
-    version="0.0.6",
+    version="0.0.7",
     author="City of Austin",
     author_email="transportation.data@austintexas.gov",
     description="Reusable argument parser for Python scripts.",
