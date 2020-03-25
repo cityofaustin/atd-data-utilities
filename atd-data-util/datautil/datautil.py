@@ -94,7 +94,7 @@ def stringify_key_values(dicts, keys=None):
 
 
 def remove_linebreaks(dicts, keys):
-    
+
     breakless = []
 
     for record in dicts:
@@ -138,6 +138,26 @@ def mills_to_iso(dicts, keys, tz="US/Central"):
                     utc = arrow.get(0).shift(seconds=unix)
                     local = utc.to(tz)
                     record[key] = local.format()
+
+                except ValueError:
+                    #  handle empty values
+                    if not record[key]:
+                        continue
+                    else:
+                        raise ValueError
+    return dicts
+
+
+def mills_to_iso_socrata(dicts, keys, tz="US/Central"):
+    # convert millesecond date to ISO8601 date accepted by Socrata
+    for record in dicts:
+        for key in record:
+            if key in keys:
+                try:
+                    unix = float(record[key]) / 1000
+                    utc = arrow.get(0).shift(seconds=unix)
+                    local = utc.to(tz)
+                    record[key] = local.format('YYYY-MM-DDTHH:mm:ss')
 
                 except ValueError:
                     #  handle empty values
@@ -282,46 +302,47 @@ def detect_changes(old_data, new_data, join_key, **options):
                 continue
 
             for old_record in old_data:
-                if new_record[join_key] == old_record[join_key]:  #  record match
+                if new_record[join_key] == old_record[join_key]:  # record match
 
                     for key in new_record:
 
                         if options[
                             "keys"
-                        ]:  #  optionally ignore keys not specified in options
+                        ]:  # optionally ignore keys not specified in options
                             if key not in options["keys"]:
                                 continue
 
-                        if key in old_record:  #  key exists in old
+                        if key in old_record:  # key exists in old
 
-                            if new_record[key] != old_record[key]:  #  key/val unequal
+                            if new_record[key] != old_record[key]:  # key/val unequal
                                 change_record = True
                                 continue
 
-                        if key not in old_record:  #  key in new data not in old data
+                        if key not in old_record:  # key in new data not in old data
                             change_record = True
                             continue
 
                     for key in old_record:
                         if options[
                             "keys"
-                        ]:  #  optionally ignore keys not specified in options
+                        ]:  # optionally ignore keys not specified in options
                             if key not in options["keys"]:
                                 continue
 
-                        if key not in new_record:  #  key in old data not in new data
-                            new_record[key] = ""  #  append empty key val for upload
+                        if key not in new_record:  # key in old data not in new data
+                            # append empty key val for upload
+                            new_record[key] = ""
                             change_record = True
                             continue
 
             if change_record:
-                change.append(new_record)  #  change record
+                change.append(new_record)  # change record
 
             else:
-                no_change.append(new_record)  #  no change
+                no_change.append(new_record)  # no change
 
     else:
-        delete = old_data  #  if no new data then flag all old data as delete
+        delete = old_data  # if no new data then flag all old data as delete
 
     return {"change": change, "new": new, "no_change": no_change, "delete": delete}
 
@@ -380,7 +401,7 @@ def create_rank_list(dicts, rank_key_name):
     for record in dicts:
         record[rank_key_name] = (
             dicts.index(record) + 1
-        )  #  because list indices start at
+        )  # because list indices start at
 
     return dicts
 

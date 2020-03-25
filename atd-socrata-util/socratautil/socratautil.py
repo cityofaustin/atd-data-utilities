@@ -10,7 +10,7 @@ from pprint import pprint as print
 
 import requests
 
-from datautil import mills_to_unix, mills_to_iso, iso_to_unix, lower_case_keys
+from datautil import mills_to_unix, mills_to_iso_socrata, iso_to_unix, lower_case_keys
 
 
 class Soda(object):
@@ -80,9 +80,8 @@ class Soda(object):
 
         if self.calendar_date_fields:
             if self.source == "knack":
-                self.records = mills_to_iso(
+                self.records = mills_to_iso_socrata(
                     self.records, self.calendar_date_fields)
-                self.records = replace
 
         # need to handle nulls after lowercase keys or the keys won't match the metdata
         self._handle_nulls()
@@ -249,7 +248,7 @@ class Soda(object):
             for field in self.metadata["columns"]
             if "calendar_date" in field["dataTypeName"]
         ]
-        return self.date_fields
+        return self.calendar_date_fields
 
 
 def prepare_deletes(records, primary_key):
