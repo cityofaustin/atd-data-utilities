@@ -10,7 +10,7 @@ from pprint import pprint as print
 
 import requests
 
-from datautil import mills_to_unix, iso_to_unix, lower_case_keys
+from datautil import mills_to_unix, mills_to_iso, iso_to_unix, lower_case_keys
 
 
 class Soda(object):
@@ -22,6 +22,7 @@ class Soda(object):
         self,
         auth=None,
         date_fields=None,
+        calendar_date_fields=None,
         host="data.austintexas.gov",
         lat_field="locaiton_latitude",
         lon_field="location_longitude",
@@ -59,6 +60,7 @@ class Soda(object):
         self._get_metadata()
         self._get_fieldnames()
         self._get_date_fields()
+        self._get_calendar_date_fields()
 
         if self.records:
             self._handle_records()
@@ -75,6 +77,12 @@ class Soda(object):
                 self.records = mills_to_unix(self.records, self.date_fields)
             elif self.source == "postgrest" or self.source == "kits" or self.source == "bcycle":
                 self.records = iso_to_unix(self.records, self.date_fields)
+
+        if self.calendar_date_fields:
+            if self.source == "knack":
+                self.records = mills_to_iso(
+                    self.records, self.calendar_date_fields)
+                self.records = replace
 
         # need to handle nulls after lowercase keys or the keys won't match the metdata
         self._handle_nulls()
@@ -111,7 +119,7 @@ class Soda(object):
         return self.records
 
     def _upload(self):
-
+        print(self.records[0])
         if self.replace:
             res = requests.put(self.url, json=self.records, auth=self.auth)
 
@@ -232,6 +240,14 @@ class Soda(object):
             field["fieldName"]
             for field in self.metadata["columns"]
             if "date" in field["dataTypeName"]
+        ]
+        return self.date_fields
+
+    def _get_calendar_date_fields(self):
+        self.calendar_date_fields = [
+            field["fieldName"]
+            for field in self.metadata["columns"]
+            if "calendar_date" in field["dataTypeName"]
         ]
         return self.date_fields
 
