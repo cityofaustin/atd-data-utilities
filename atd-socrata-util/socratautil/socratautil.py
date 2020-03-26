@@ -74,13 +74,18 @@ class Soda(object):
         if self.date_fields:
             if self.source == "knack":
                 self.records = mills_to_unix(self.records, self.date_fields)
-            elif self.source == "postgrest" or self.source == "kits" or self.source == "bcycle":
+            elif (
+                self.source == "postgrest"
+                or self.source == "kits"
+                or self.source == "bcycle"
+            ):
                 self.records = iso_to_unix(self.records, self.date_fields)
 
         if self.calendar_date_fields:
             if self.source == "knack":
                 self.records = mills_to_iso_socrata(
-                    self.records, self.calendar_date_fields)
+                    self.records, self.calendar_date_fields
+                )
 
         # need to handle nulls after lowercase keys or the keys won't match the metdata
         self._handle_nulls()

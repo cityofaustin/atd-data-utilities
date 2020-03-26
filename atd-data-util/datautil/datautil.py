@@ -157,7 +157,7 @@ def mills_to_iso_socrata(dicts, keys, tz="US/Central"):
                     unix = float(record[key]) / 1000
                     utc = arrow.get(0).shift(seconds=unix)
                     local = utc.to(tz)
-                    record[key] = local.format('YYYY-MM-DDTHH:mm:ss')
+                    record[key] = local.format("YYYY-MM-DDTHH:mm:ss")
 
                 except ValueError:
                     #  handle empty values
@@ -399,9 +399,7 @@ def min_index(list_of_vals, val):
 def create_rank_list(dicts, rank_key_name):
     #  create 'rank' key and assign rank based on position of dict in list
     for record in dicts:
-        record[rank_key_name] = (
-            dicts.index(record) + 1
-        )  # because list indices start at
+        record[rank_key_name] = dicts.index(record) + 1  # because list indices start at
 
     return dicts
 
