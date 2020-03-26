@@ -149,7 +149,7 @@ def mills_to_iso(dicts, keys, tz="US/Central"):
 
 
 def mills_to_iso_socrata(dicts, keys, tz="US/Central"):
-    # convert millesecond date to ISO8601 date accepted by Socrata
+    # convert millisecond date to Socrata floating timestamp
     for record in dicts:
         for key in record:
             if key in keys:

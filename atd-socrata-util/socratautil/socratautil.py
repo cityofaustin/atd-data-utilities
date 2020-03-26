@@ -35,7 +35,6 @@ class Soda(object):
     ):
 
         self.auth = auth
-        self.date_fields = date_fields
         self.host = host
         self.lat_field = lat_field
         self.lon_field = lon_field
@@ -118,7 +117,7 @@ class Soda(object):
         return self.records
 
     def _upload(self):
-        print(self.records[0])
+
         if self.replace:
             res = requests.put(self.url, json=self.records, auth=self.auth)
 
@@ -238,10 +237,11 @@ class Soda(object):
         self.date_fields = [
             field["fieldName"]
             for field in self.metadata["columns"]
-            if "date" in field["dataTypeName"]
+            if "date" == field["dataTypeName"]
         ]
         return self.date_fields
 
+    # Handle Socrata floating timestamp format
     def _get_calendar_date_fields(self):
         self.calendar_date_fields = [
             field["fieldName"]
