@@ -129,27 +129,7 @@ def mills_to_unix(dicts, keys):
 
 
 def mills_to_iso(dicts, keys, tz="US/Central"):
-    # convert millesecond date to ISO8601 date
-    for record in dicts:
-        for key in record:
-            if key in keys:
-                try:
-                    unix = float(record[key]) / 1000
-                    utc = arrow.get(0).shift(seconds=unix)
-                    local = utc.to(tz)
-                    record[key] = local.format()
-
-                except ValueError:
-                    #  handle empty values
-                    if not record[key]:
-                        continue
-                    else:
-                        raise ValueError
-    return dicts
-
-
-def mills_to_iso_socrata(dicts, keys, tz="US/Central"):
-    # convert millisecond date to Socrata floating timestamp
+    # convert millisecond date to Socrata ISO8601 floating timestamp
     for record in dicts:
         for key in record:
             if key in keys:

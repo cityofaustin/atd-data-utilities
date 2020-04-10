@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="atd-data-util",
-    version="0.0.3",
+    version="0.1.0",
     author="City of Austin",
     author_email="transportation.data@austintexas.gov",
     description="Miscellaneous utilities for manipulating data.",
