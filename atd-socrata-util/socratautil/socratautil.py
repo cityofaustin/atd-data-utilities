@@ -10,7 +10,7 @@ from pprint import pprint as print
 
 import requests
 
-from datautil import mills_to_unix, iso_to_unix, lower_case_keys
+from datautil import mills_to_iso, iso_to_unix, lower_case_keys
 
 
 class Soda(object):
@@ -34,7 +34,6 @@ class Soda(object):
     ):
 
         self.auth = auth
-        self.date_fields = date_fields
         self.host = host
         self.lat_field = lat_field
         self.lon_field = lon_field
@@ -72,8 +71,12 @@ class Soda(object):
 
         if self.date_fields:
             if self.source == "knack":
-                self.records = mills_to_unix(self.records, self.date_fields)
-            elif self.source == "postgrest" or self.source == "kits" or self.source == "bcycle":
+                self.records = mills_to_iso(self.records, self.date_fields)
+            elif (
+                self.source == "postgrest"
+                or self.source == "kits"
+                or self.source == "bcycle"
+            ):
                 self.records = iso_to_unix(self.records, self.date_fields)
 
         # need to handle nulls after lowercase keys or the keys won't match the metdata
