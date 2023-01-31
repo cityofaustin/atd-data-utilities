@@ -22,7 +22,7 @@ class Soda(object):
         self,
         auth=None,
         date_fields=None,
-        host="data.austintexas.gov",
+        host="datahub.austintexas.gov",
         lat_field="locaiton_latitude",
         lon_field="location_longitude",
         location_field="location",
